@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brave Store - Product Listing</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Basic reset */
+        
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            font-family: Arial, sans-serif;
+        }
+        /* Navbar styling */
+        
+        .navbar {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            z-index: 3;
+            background: transparent;
+            padding: 1rem 2rem;
+        }
+        /* Hero Section */
+        
+        .hero-slider {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .slide {
+            background-size: cover;
+            background-position: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0;
+            /* Ẩn slide ban đầu */
+            transition: opacity 0.5s ease-in-out;
+        }
+        
+        .slide.active {
+            opacity: 1;
+            /* Hiển thị slide */
+            z-index: 1;
+        }
+        
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            /* Tạo lớp phủ đen mờ */
+            z-index: 1;
+        }
+        
+        .hero-slider .prev,
+        .hero-slider .next {
+            position: absolute;
+            top: 50%;
+            font-size: 2rem;
+            color: white;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            transform: translateY(-50%);
+            z-index: 2;
+        }
+        
+        .hero-slider .prev {
+            left: 20px;
+        }
+        
+        .hero-slider .next {
+            right: 20px;
+        }
+        
+        .search-bar {
+            position: absolute;
+            top: 1%;
+            width: 30%;
+            left: 27%;
+            z-index: 4;
+        }
+        
+        .search-bar input {
+            border-radius: 20px;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+        }
+        
+        .search-bar button {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            border: none;
+            background: #e60000;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 1rem;
+        }
+        /* Sidebar Styling */
+        /* Sidebar Container */
+        
+        .sidebar {
+            background-color: #f9f9f9;
+            /* Màu nền nhẹ */
+            padding: 1.5rem;
+            border-right: 1px solid #e0e0e0;
+            /* Đường viền tinh tế */
+            max-width: 250px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Đổ bóng nhẹ */
+        }
+        /* Filter Group Headers */
+        
+        .sidebar h6 {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: color 0.3s ease;
+        }
+        
+        .sidebar h6:hover {
+            color: #007bff;
+            /* Màu xanh khi di chuột */
+        }
+        /* Collapsible Icon */
+        
+        .collapse-icon {
+            font-size: 0.9rem;
+            transition: transform 0.3s ease;
+        }
+        /* Filter Options Styling */
+        
+        .sidebar .filter-group {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .sidebar .filter-option {
+            font-size: 0.95rem;
+            margin-bottom: 0.6rem;
+            color: #555;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s ease;
+        }
+        
+        .filter-option {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+            color: #555555;
+        }
+        
+        .filter-option input[type="checkbox"] {
+            display: none;
+            /* Ẩn checkbox để chỉ hiển thị ô màu */
+        }
+        
+        .color-box {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            border-radius: 50%;
+            /* Tạo hình tròn cho ô màu */
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+        
+        .filter-option label {
+            cursor: pointer;
+        }
+        
+        .filter-option input[type="checkbox"]:checked+.color-box {
+            border: 2px solid #007bff;
+            /* Thêm viền xanh khi được chọn */
+        }
+        
+        .sidebar .filter-option input {
+            margin-right: 0.5rem;
+        }
+        
+        .sidebar .filter-option:hover {
+            color: #007bff;
+        }
+        /* Styling for Inputs */
+        
+        .sidebar input[type="number"] {
+            font-size: 0.9rem;
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 0.5rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .sidebar input[type="number"]:focus {
+            border-color: #007bff;
+            /* Màu viền khi được chọn */
+            outline: none;
+        }
+        /* Button Styling */
+        
+        .sidebar button.btn-primary {
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+        
+        .sidebar button.btn-primary:hover {
+            background-color: #0056b3;
+        }
+        /* Enhancements for Checkbox and Radio Buttons */
+        
+        .sidebar .filter-option input[type="checkbox"],
+        .sidebar .filter-option input[type="radio"] {
+            accent-color: #007bff;
+            transform: scale(1.2);
+        }
+        /* Link Styling for "View All" */
+        
+        .sidebar a {
+            display: inline-block;
+            font-size: 0.9rem;
+            color: #007bff;
+            text-decoration: none;
+            margin-top: 0.5rem;
+            transition: color 0.3s ease;
+        }
+        
+        .sidebar a:hover {
+            color: #0056b3;
+        }
+        /* Product List Styling */
+        
+        .product-list {
+            padding: 1rem;
+        }
+        
+        .product-item {
+            display: flex;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background-color: #fff;
+        }
+        
+        .product-img {
+            width: 120px;
+            height: 120px;
+            margin-right: 1rem;
+            object-fit: cover;
+        }
+        
+        .product-details {
+            flex-grow: 1;
+        }
+        
+        .product-title {
+            font-weight: bold;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .product-price {
+            color: #b1001f;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .old-price {
+            text-decoration: line-through;
+            color: #888;
+            font-size: 0.9rem;
+        }
+        
+        .free-shipping {
+            color: green;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        
+        .product-rating {
+            font-size: 0.9rem;
+            color: #ffcc00;
+            margin-bottom: 0.5rem;
+        }
+        
+        .product-actions i {
+            font-size: 1.3rem;
+            color: #b1001f;
+            cursor: pointer;
+            margin-left: 0.5rem;
+        }
+        /* Pagination */
+        
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            padding: 1rem;
+        }
+        /* Footer Styling */
+        
+        .footer {
+            background-color: #000;
+            color: white;
+            padding: 2rem;
+        }
+        
+        .footer h4 {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .footer p {
+            font-size: 0.875rem;
+            color: #ccc;
+        }
+        
+        .footer .subscribe-form input[type="email"] {
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px 0 0 5px;
+            font-size: 1rem;
+        }
+        
+        .footer .subscribe-form button {
+            border: none;
+            padding: 0.5rem 1rem;
+            background-color: #e60000;
+            color: white;
+            border-radius: 0 5px 5px 0;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .footer .social-icons a {
+            color: white;
+            font-size: 1.5rem;
+            margin-right: 0.5rem;
+            transition: color 0.2s;
+        }
+        
+        .footer .social-icons a:hover {
+            color: #e60000;
+        }
+        
+        .footer .footer-links {
+            font-size: 0.875rem;
+            color: #ccc;
+            margin-top: 1rem;
+        }
+        
+        .footer .footer-links a {
+            color: #ccc;
+            margin-right: 1rem;
+            text-decoration: none;
+        }
+        
+        .footer .footer-links a:hover {
+            color: #e60000;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">BRAVE STORE</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Trang chủ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="contact.html">Liên hệ chúng tôi</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="login.html">Đăng nhập</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="sanpham.html">Sản phẩm</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="register.html">Đăng ký</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="giohang.html">
+                            <i class="bi bi-cart"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Original Hero Section -->
+    <div class="hero-slider">
+        <!-- Slide 1 -->
+        <div class="slide active" style="background-image: url('image/home-img.png');">
+            <div class="hero-overlay"></div>
+            <div class="search-bar">
+                <input type="text" class="form-control" placeholder="Tìm Kiếm Ở Đây!">
+                <button class="btn btn-danger position-absolute" style="top: 50%; right: -24%; border-radius: 30px;">Tìm kiếm</button>
+            </div>
+        </div>
+
+        <!-- Slide 2 -->
+        <div class="slide" style="background-image: url('https://cdn.pixabay.com/photo/2017/08/07/14/02/man-2604149_1280.jpg');">
+            <div class="hero-overlay"></div>
+            <div class="search-bar">
+                <input type="text" class="form-control" placeholder="Tìm Kiếm Ở Đây!">
+                <button class="btn btn-danger position-absolute" style="top: 50%; right: -24%; border-radius: 30px;">Tìm kiếm</button>
+            </div>
+        </div>
+
+        <!-- Slide 3 (Thêm slide tùy ý) -->
+        <div class="slide" style="background-image: url('https://cdn.pixabay.com/photo/2021/11/10/06/23/workout-6783020_960_720.jpg');">
+            <div class="hero-overlay"></div>
+            <div class="search-bar">
+                <input type="text" class="form-control" placeholder="Tìm Kiếm Ở Đây!">
+                <button class="btn btn-danger position-absolute" style="top: 50%; right: -24%; border-radius: 30px;">Tìm kiếm</button>
+            </div>
+        </div>
+
+        <!-- Nút Điều Hướng -->
+        <button class="prev" onclick="prevSlide()">&#10094;</button>
+        <button class="next" onclick="nextSlide()">&#10095;</button>
+    </div>
+
+    <div class="container-fluid mt-3">
+        <div class="row">
+            <div class="row">
+                <!-- Filters Sidebar -->
+                <aside class="col-md-4 sidebar">
+                    <!-- Filter Group: Sports Category -->
+                    <div class="filter-group">
+                        <h6 data-bs-toggle="collapse" href="#sportCategory" role="button" aria-expanded="true" aria-controls="sportCategory">
+                            Theo môn thể thao <i class="collapse-icon fas fa-chevron-down"></i>
+                        </h6>
+                        <div class="collapse show" id="sportCategory">
+                            <div class="filter-option"><input type="checkbox"> Chạy bộ</div>
+                            <div class="filter-option"><input type="checkbox"> Lướt sóng</div>
+                            <div class="filter-option"><input type="checkbox"> Pilates</div>
+                            <div class="filter-option"><input type="checkbox"> Kéo dài</div>
+                            <a href="#">Xem tất cả</a>
+                        </div>
+                    </div>
+
+                    <!-- Filter Group: Product Type -->
+                    <div class="filter-group">
+                        <h6 data-bs-toggle="collapse" href="#productType" role="button" aria-expanded="true" aria-controls="productType">
+                            Theo sản phẩm <i class="collapse-icon fas fa-chevron-down"></i>
+                        </h6>
+                        <div class="collapse show" id="productType">
+                            <div class="filter-option"><input type="checkbox"> Áo thun</div>
+                            <div class="filter-option"><input type="checkbox"> Xà cạp</div>
+                            <div class="filter-option"><input type="checkbox"> Trang phục bơi</div>
+                            <div class="filter-option"><input type="checkbox"> Tất</div>
+                            <a href="#">Xem tất cả</a>
+                        </div>
+                    </div>
+
+                    <!-- Filter Group: Gender -->
+                    <div class="filter-group">
+                        <h6 data-bs-toggle="collapse" href="#gender" role="button" aria-expanded="true" aria-controls="gender">
+                            Theo giới tính <i class="collapse-icon fas fa-chevron-down"></i>
+                        </h6>
+                        <div class="collapse show" id="gender">
+                            <div class="filter-option"><input type="checkbox"> Của phụ nữ</div>
+                            <div class="filter-option"><input type="checkbox"> Của nam giới</div>
+                            <div class="filter-option"><input type="checkbox"> Cô gái</div>
+                            <div class="filter-option"><input type="checkbox"> Con trai</div>
+                            <a href="#">Xem tất cả</a>
+                        </div>
+                    </div>
+
+                    <!-- Filter Group: Price Range -->
+                    <div class="filter-group">
+                        <h6 data-bs-toggle="collapse" href="#priceRange" role="button" aria-expanded="true" aria-controls="priceRange">
+                            Khoảng giá <i class="collapse-icon fas fa-chevron-down"></i>
+                        </h6>
+                        <div class="collapse show" id="priceRange">
+                            <input type="number" placeholder="Tối thiểu" class="form-control mb-2">
+                            <input type="number" placeholder="Tối đa" class="form-control mb-2">
+                            <button class="btn btn-primary btn-sm">Áp dụng</button>
+                        </div>
+                    </div>
+
+                    <!-- Filter Group: Size -->
+                    <div class="filter-group">
+                        <h6 data-bs-toggle="collapse" href="#size" role="button" aria-expanded="true" aria-controls="size">
+                            Kích cỡ <i class="collapse-icon fas fa-chevron-down"></i>
+                        </h6>
+                        <div class="collapse show" id="size">
+                            <div class="filter-option"><input type="radio" name="size"> S</div>
+                            <div class="filter-option"><input type="radio" name="size"> M</div>
+                            <div class="filter-option"><input type="radio" name="size"> L</div>
+                            <div class="filter-option"><input type="radio" name="size"> XL</div>
+                        </div>
+                    </div>
+
+                    <!-- Filter Group: Color -->
+                    <div class="filter-group">
+                        <h6 data-bs-toggle="collapse" href="#color" role="button" aria-expanded="true" aria-controls="color">
+                            Theo màu sắc <i class="collapse-icon fas fa-chevron-down"></i>
+                        </h6>
+                        <div class="collapse show" id="color">
+                            <div class="filter-option">
+                                <input type="checkbox" id="color-black">
+                                <label for="color-black" class="color-box" style="background-color: #000000;"></label> Đen
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="color-blue">
+                                <label for="color-blue" class="color-box" style="background-color: #007bff;"></label> Xanh dương
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="color-red">
+                                <label for="color-red" class="color-box" style="background-color: #ff0000;"></label> Đỏ
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="color-green">
+                                <label for="color-green" class="color-box" style="background-color: #28a745;"></label> Xanh lá
+                            </div>
+                            <div class="filter-option">
+                                <input type="checkbox" id="color-white">
+                                <label for="color-white" class="color-box" style="background-color: #ffffff; border: 1px solid #ddd;"></label> Trắng
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Product Listing -->
+                <main class="col-md-8 product-list">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span>12,911 mặt hàng trong Trang phục nam</span>
+                        <div>
+                            <select class="form-select d-inline w-auto" aria-label="Sort Options">
+                            <option selected>Nổi bật</option>
+                            <option value="1">Giá thấp đến cao</option>
+                            <option value="2">Giá cao đến thấp</option>
+                        </select>
+                            <i class="fas fa-th-large mx-2"></i>
+                            <i class="fas fa-list"></i>
+                        </div>
+                    </div>
+
+                    <div class="product-item">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTubhQ-E1UNPbmVMzBDtr7wnzIYQfrNOrDy2w&s" alt="Product Image" class="product-img">
+                        <div class="product-details">
+                            <p class="product-title">Áo khoác trượt tuyết nam bl 100 - đen</p>
+                            <div class="product-rating">★ 7.5 | 154 đơn đặt hàng</div>
+                            <p class="product-price">1.200.000 VND <span class="old-price">1.300.000 VND</span></p>
+                            <p class="free-shipping">Miễn phí vận chuyển</p>
+                            <p class="text-muted">Việc có khách hàng rất là quan trọng...</p>
+                            <a href="sanphamchitiet.html">Xem chi tiết</a>
+                        </div>
+                        <div class="product-actions">
+                            <i class="fas fa-heart"></i>
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                    </div>
+
+                    <div class="product-item">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTubhQ-E1UNPbmVMzBDtr7wnzIYQfrNOrDy2w&s" alt="Product Image" class="product-img">
+                        <div class="product-details">
+                            <p class="product-title">Áo khoác trượt tuyết nam bl 100 - đen</p>
+                            <div class="product-rating">★ 7.5 | 154 đơn đặt hàng</div>
+                            <p class="product-price">1.200.000 VND <span class="old-price">1.300.000 VND</span></p>
+                            <p class="free-shipping">Miễn phí vận chuyển</p>
+                            <p class="text-muted">Việc có khách hàng rất là quan trọng...</p>
+                            <a href="sanphamchitiet.html">Xem chi tiết</a>
+                        </div>
+                        <div class="product-actions">
+                            <i class="fas fa-heart"></i>
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                    </div>
+
+                    <div class="product-item">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTubhQ-E1UNPbmVMzBDtr7wnzIYQfrNOrDy2w&s" alt="Product Image" class="product-img">
+                        <div class="product-details">
+                            <p class="product-title">Áo khoác trượt tuyết nam bl 100 - đen</p>
+                            <div class="product-rating">★ 7.5 | 154 đơn đặt hàng</div>
+                            <p class="product-price">1.200.000 VND <span class="old-price">1.300.000 VND</span></p>
+                            <p class="free-shipping">Miễn phí vận chuyển</p>
+                            <p class="text-muted">Việc có khách hàng rất là quan trọng...</p>
+                            <a href="sanphamchitiet.html">Xem chi tiết</a>
+                        </div>
+                        <div class="product-actions">
+                            <i class="fas fa-heart"></i>
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                    </div>
+
+                    <div class="product-item">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTubhQ-E1UNPbmVMzBDtr7wnzIYQfrNOrDy2w&s" alt="Product Image" class="product-img">
+                        <div class="product-details">
+                            <p class="product-title">Áo khoác trượt tuyết nam bl 100 - đen</p>
+                            <div class="product-rating">★ 7.5 | 154 đơn đặt hàng</div>
+                            <p class="product-price">1.200.000 VND <span class="old-price">1.300.000 VND</span></p>
+                            <p class="free-shipping">Miễn phí vận chuyển</p>
+                            <p class="text-muted">Việc có khách hàng rất là quan trọng...</p>
+                            <a href="sanphamchitiet.html">Xem chi tiết</a>
+                        </div>
+                        <div class="product-actions">
+                            <i class="fas fa-heart"></i>
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                    </div>
+
+                    <div class="product-item">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTubhQ-E1UNPbmVMzBDtr7wnzIYQfrNOrDy2w&s" alt="Product Image" class="product-img">
+                        <div class="product-details">
+                            <p class="product-title">Áo khoác trượt tuyết nam bl 100 - đen</p>
+                            <div class="product-rating">★ 7.5 | 154 đơn đặt hàng</div>
+                            <p class="product-price">1.200.000 VND <span class="old-price">1.300.000 VND</span></p>
+                            <p class="free-shipping">Miễn phí vận chuyển</p>
+                            <p class="text-muted">Việc có khách hàng rất là quan trọng...</p>
+                            <a href="sanphamchitiet.html">Xem chi tiết</a>
+                        </div>
+                        <div class="product-actions">
+                            <i class="fas fa-heart"></i>
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                    </div>
+
+                    <div class="product-item">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTubhQ-E1UNPbmVMzBDtr7wnzIYQfrNOrDy2w&s" alt="Product Image" class="product-img">
+                        <div class="product-details">
+                            <p class="product-title">Áo khoác trượt tuyết nam bl 100 - đen</p>
+                            <div class="product-rating">★ 7.5 | 154 đơn đặt hàng</div>
+                            <p class="product-price">1.200.000 VND <span class="old-price">1.300.000 VND</span></p>
+                            <p class="free-shipping">Miễn phí vận chuyển</p>
+                            <p class="text-muted">Việc có khách hàng rất là quan trọng...</p>
+                            <a href="sanphamchitiet.html">Xem chi tiết</a>
+                        </div>
+                        <div class="product-actions">
+                            <i class="fas fa-heart"></i>
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                    </div>
+
+                    <!-- Repeat the product-item div for each product -->
+
+                </main>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-container">
+                <nav>
+                    <ul class="pagination">
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <footer class="footer">
+            <div class="container">
+                <div class="row">
+                    <!-- Left Column: Subscription Information -->
+                    <div class="col-md-6">
+                        <h4>Đăng ký nhận bản tin của chúng tôi</h4>
+                        <p>Nhận tin tức hàng ngày về các ưu đãi sắp tới từ nhiều nhà cung cấp trên toàn thế giới</p>
+                        <h2>Sẵn sàng cho<br>cuộc sống tuyệt vời?</h2>
+                        <p><i class="fas fa-envelope"></i> Info@Bravestore.com</p>
+                    </div>
+
+                    <!-- Right Column: Subscription Form and Social Media -->
+                    <div class="col-md-6 d-flex flex-column align-items-md-end align-items-start mt-4 mt-md-0">
+                        <!-- Subscription Form -->
+                        <form class="subscribe-form d-flex mb-3">
+                            <input type="email" placeholder="E-mail" required>
+                            <button type="submit">Đặt mua</button>
+                        </form>
+                        <button class="btn btn-outline-light mb-3">Đánh giá website?</button>
+
+                        <!-- Social Media Icons -->
+                        <div class="social-icons">
+                            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Links -->
+                <div class="footer-links text-center mt-4">
+                    <a href="#">Điều Khoản</a>
+                    <a href="#">Chính Sách Bảo Mật</a>
+                </div>
+            </div>
+        </footer>
+        <!-- Bootstrap JavaScript Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Font Awesome -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+        <script src="myJs.js"></script>
+</body>
+
+</html>

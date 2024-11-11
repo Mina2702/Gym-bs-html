@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký - Brave Store</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Basic Reset */
+        
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            height: 100%;
+            background: url('image/home-img.png') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+        }
+        /* Gradient Overlay */
+        
+        .overlay {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4));
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1;
+        }
+        /* Navbar Styling */
+        
+        .navbar {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            z-index: 2;
+        }
+        
+        .navbar a {
+            color: white;
+            margin-right: 20px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .navbar a.active {
+            text-decoration: underline;
+        }
+        /* Form Container */
+        
+        .register-container {
+            position: relative;
+            z-index: 2;
+            max-width: 400px;
+            margin: auto;
+            padding: 2.5rem;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.15);
+            margin-top: 8%;
+        }
+        /* Title */
+        
+        .register-title {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            color: #333;
+            margin-bottom: 1.5rem;
+        }
+        /* Avatar Icon */
+        
+        .avatar-icon {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .avatar-icon i {
+            font-size: 4rem;
+            color: #888;
+        }
+        
+        .avatar-text {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+        /* Input Fields */
+        
+        .form-control {
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            padding: 0.75rem;
+        }
+        /* Register Button */
+        
+        .btn-register {
+            width: 100%;
+            background-color: #ff3d00;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            padding: 0.75rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-register:hover {
+            background-color: #e63500;
+        }
+        /* Links Styling */
+        
+        .register-container a {
+            font-size: 0.9rem;
+            color: #666;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .register-container a:hover {
+            color: #333;
+        }
+        
+        .login-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Background Overlay -->
+    <div class="overlay"></div>
+
+    <!-- Navbar with Logo and Links -->
+    <div class="navbar">
+        <a href="index.html">Trang chủ</a>
+        <a href="contact.html">Liên hệ với chúng tôi</a>
+        <a href="login.html">Đăng nhập</a>
+        <a href="register.html" class="active">Đăng ký</a>
+    </div>
+
+    <!-- Register Form Container -->
+    <div class="register-container">
+        <h2 class="register-title">Đăng ký</h2>
+
+        <!-- Avatar Icon -->
+        <div class="avatar-icon">
+            <i class="fas fa-user-circle" style="font-size: xx-large;"></i>
+        </div>
+        <p class="avatar-text">Chọn Hình Đại Diện</p>
+
+        <!-- Registration Form -->
+        <form>
+            <div class="mb-3">
+                <input type="email" class="form-control" placeholder="Địa chỉ email của bạn">
+            </div>
+            <div class="mb-3">
+                <input type="text" class="form-control" placeholder="Tên người dùng">
+            </div>
+            <div class="mb-3">
+                <input type="text" class="form-control" placeholder="Số liên lạc">
+            </div>
+            <div class="mb-3">
+                <input type="password" class="form-control" placeholder="Mật khẩu">
+            </div>
+            <button type="submit" class="btn-register">Đăng ký</button>
+        </form>
+
+        <p class="login-link">Có tài khoản? <a href="login.html">Đăng nhập</a></p>
+    </div>
+
+    <!-- Bootstrap and Font Awesome JavaScript Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+</body>
+
+</html>
